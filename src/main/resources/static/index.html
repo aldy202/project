@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <title>Welcone ^_^</title>
+  </head>
+  <body>
+    <div>Data Consume</div>
+    <hr />
+
+    <script>
+      const url = "http://localhost:8080/mydata";
+      //get data from server
+      function get() {
+        $.ajax({
+          url: url,
+          method: "GET",
+          dataType: "json",
+          success: function (data) {
+            //start function
+            $("#mytable").find("tbody").empty(); //for empty table if data exists
+            $.each(data, function (key, value) {
+              //fill data to table
+              var td =
+                "<tr><td>" + value.id + "</td> <td>" + value.nama+ "</td> <td>" + value.tanggal + "</td> <td>" + value.photo  +  "</td> </tr>";
+              $("#mytable").find("tbody").append(td);
+            });
+          }, //end function
+        });
+      }
+
+      //create new data
+      function post() {
+        let editID = document.getElementById("myid").value;
+        let name = document.getElementById("name").value;
+        let tanggal = document.getElementById("tanggal").value;
+        let photo = document.getElementById("photo").value;
+        let dataText = { id: editID, nama:name, tanggal: tanggal};
+        let dataJson = JSON.stringify(dataText);
+        $.ajax({
+          url: url,
+          method: "POST",
+          data: dataJson,
+          contentType: "application/json",
+          dataType: "text",
+          success: function (result) {
+            document.getElementById("view").innerHTML = result;
+            get();
+          },
+        });
+      }
+
+      function put() {
+        let editID = document.getElementById("myid").value;
+        let name = document.getElementById("name").value;
+        let tanggal = document.getElementById("tanggal").value;
+        let dataText = { id: editID, nama:name, tanggal: tanggal };
+        let dataJson = JSON.stringify(dataText);
+        $.ajax({
+          url: url,
+          method: "PUT",
+          data: dataJson,
+          contentType: "application/json",
+          dataType: "text",
+          success: function (result) {
+              document.getElementById("view").innerHTML = result;
+            get();
+          },
+        });
+      }
+
+      function delID() {
+        let editID = document.getElementById("myid").value;
+        let dataText = { id: editID };
+        let dataJson = JSON.stringify(dataText);
+        $.ajax({
+          url: url,
+          method: "DELETE",
+          data: dataJson,
+          contentType: "application/json",
+          dataType: "text",
+          success: function (result) {
+              document.getElementById("view").innerHTML = result;
+            get();
+          },
+        });
+      }
+    </script>
+    <table>
+      <tr>
+        <td>ID</td>
+        <td>:</td>
+        <td><input type="text" id="myid" name="myid" /></td>
+        <td><button onclick="get()">GET</button></td>
+      </tr>
+      <tr>
+        <td>Nama</td>
+        <td>:</td>
+        <td><input type="text" id="name" name="name" /></td>
+        <td><button onclick="post()">INSERT</button></td>
+      </tr>
+      <tr>
+        <td>Tanggal</td>
+        <td>:</td>
+        <td><input type="date" id="tanggal" name="tanggal" /></td>
+        <td><button onclick="put()">UPDATE</button></td>
+      </tr>
+      <tr>
+        <td>Photo</td>
+        <td>:</td>
+        <td><input type="file" id="photo" name="photo" /></td>
+        <td><button onclick="delID()">DELETE</button></td>
+      </tr>
+    </table>
+
+    <hr />
+    <br />
+    <div id="view"></div>
+    <table id="mytable" border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nama</th>
+          <th>Tanggal</th>
+          <th>Photo</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </body>
+</html>
